@@ -1,0 +1,39 @@
+{% assign resenas = shop.metaobjects['resena_cliente'].values %}
+<div class="vada-resenas page-width" style="padding: 36px 20px;">
+  {% if resenas.size > 0 or request.design_mode %}
+  <h2 style="text-align:center; margin-bottom: 28px;">{{ section.settings.title }}</h2>
+  {% endif %}
+  {% if resenas.size == 0 and request.design_mode %}
+    <p style="text-align:center; opacity:.7;">Aún no hay reseñas. Agrégalas en Admin → Contenido → Metaobjetos → Reseña de cliente.</p>
+  {% endif %}
+  <div style="display:grid; gap:18px; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); max-width:1200px; margin:0 auto;">
+    {% for r in resenas %}
+      <div style="border:1px solid #ececec; border-radius:14px; padding:18px; background:#fff; display:flex; flex-direction:column; gap:10px;">
+        {% if r.foto %}{% assign img = r.foto.value %}{% if img %}<div style="border-radius:10px; overflow:hidden;">{{ img | image_url: width: 600 | image_tag: loading: 'lazy', style: 'width:100%; height:auto; display:block;' }}</div>{% endif %}{% endif %}
+        {% assign n = r.estrellas | plus: 0 %}
+        <div style="color:#50189b; font-size:18px; letter-spacing:2px;" aria-label="{{ n }} de 5 estrellas">{% for i in (1..5) %}{% if i <= n %}&#9733;{% else %}&#9734;{% endif %}{% endfor %}</div>
+        <p style="margin:0; line-height:1.5;">{{ r.texto }}</p>
+        <div style="font-size:14px; opacity:.8;"><strong>{{ r.nombre }}</strong>{% if r.ciudad != blank %} · {{ r.ciudad }}{% endif %}{% if r.fecha != blank %} · {{ r.fecha | date: '%d/%m/%Y' }}{% endif %}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Reseñas VADA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Lo que dicen nuestros clientes"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reseñas VADA"
+    }
+  ]
+}
+{% endschema %}
